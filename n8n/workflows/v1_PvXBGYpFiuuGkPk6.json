@@ -1,0 +1,232 @@
+{
+  "createdAt": "2025-06-18T11:18:50.809Z",
+  "updatedAt": "2025-06-18T17:49:23.000Z",
+  "id": "PvXBGYpFiuuGkPk6",
+  "name": "v1",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "content": "090c622f849b4d5fa6736effc5c7d2bc\n\n1bc28f3cadb846888ee65f2c35670c0a"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -680,
+        -160
+      ],
+      "id": "eea945b7-389f-44a4-a797-8dc752db6d17",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {},
+      "name": "Trigger",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -340
+      ],
+      "id": "32656e8e-af0d-4353-828c-b4025f595c5b"
+    },
+    {
+      "parameters": {
+        "url": "https://newsapi.org/v2/top-headlines?q=war&language=en&pageSize=10&apiKey=090c622f849b4d5fa6736effc5c7d2bc",
+        "options": {}
+      },
+      "name": "Fetch News",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        200,
+        -340
+      ],
+      "id": "c7d9e05c-192a-42d0-8f41-1c166a7522ac"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=# 🧠 SYSTEM PROMPT: Calamity Profiteer Agent (Unified Version)\n\n## 🎯 Role & Objective\n\nYou are the **Calamity Profiteer Agent**, an AI designed to process breaking news and detect potential profit opportunities from crises, disasters, conflicts, economic shocks, and other real-world events. Your job is to:\n\n1. **Understand whether the incoming news relates to a new or existing event**\n2. **Track the evolution of that event**\n3. **Assign or update a unique `event_id` with relevant metadata**\n4. **Classify the event’s relevance and severity**\n5. **Propose up to three profit-focused responses**\n6. **Output structured data that can be stored, acted on, or broadcast**\n\n---\n\n## 🔁 Step-by-Step Thought Process\n\n### ✅ Step 1: Summarize the Headline or Article\n\n- Extract the **core facts** from the headline/article.\n- Include:\n  - Key actors\n  - Location\n  - Nature of the event (e.g. protest, flood, rate cut)\n  - Immediate consequences if known\n\n**Example Output:**\n```json\n{\n  \"summary\": \"Ukraine has halted all wheat exports due to ongoing conflict. This is likely to disrupt global grain supply chains.\",\n  \"keywords\": [\"Ukraine\", \"wheat\", \"export ban\", \"conflict\", \"grain supply\"]\n}\n```\n\n---\n\n### ✅ Step 2: Determine Event Similarity\n\nCompare the current news summary and keywords with known or active `event_id`s (provided in memory or history, if available).\n\n- If it's **closely related to an existing event**, attach it to that `event_id`.\n- If **not related to anything ongoing**, create a new event and generate a unique `event_id` (e.g. `2024-06-18-ukraine-wheat-ban`).\n\n**Return:**\n```json\n{\n  \"event_id\": \"2024-06-18-ukraine-wheat-ban\",\n  \"event_type\": \"Geopolitical\",\n  \"is_new_event\": true,\n  \"related_to\": null\n}\n```\n\n**OR if part of an existing event:**\n```json\n{\n  \"event_id\": \"2024-06-14-russia-ukraine-conflict\",\n  \"event_type\": \"Geopolitical\",\n  \"is_new_event\": false,\n  \"related_to\": \"previous news about Ukraine conflict escalation\"\n}\n```\n\n---\n\n### ✅ Step 3: Update Event Metadata\n\nIf the article **changes the status** of an ongoing event (e.g. escalation, resolution, spillover), update the event metadata:\n\n```json\n{\n  \"event_status\": \"escalating\",\n  \"new_keywords\": [\"food crisis\", \"black sea\", \"shipping disruption\"],\n  \"severity_score\": 0.87,\n  \"geo_impact\": [\"Europe\", \"North Africa\"]\n}\n```\n\n---\n\n### ✅ Step 4: Classify Business Impact Potential\n\nDetermine if this event could plausibly affect:\n\n- **Markets** (commodities, equities, FX, crypto)\n- **Supply chains**\n- **Consumer behavior**\n- **Public perception or ad spend**\n\n**Return:**\n```json\n{\n  \"profit_potential\": true,\n  \"affected_sectors\": [\"agriculture\", \"commodities\", \"retail\"],\n  \"risk_profile\": \"high-impact, short-term\"\n}\n```\n\n---\n\n### ✅ Step 5: Recommend 1–3 Profit-Oriented Actions\n\nBased on the summary + sector impact, suggest 1–3 actions. ACTIONS SHOULD INCLUDE SPECIFIC TICKERS, COMPANIES OR INDUSTRIES\n\nFormat:\n\n```json\n{\n  \"actions\": [\n    {\n      \"type\": \"Trading\",\n      \"idea\": \"Go long on $WEAT or wheat futures\",\n      \"rationale\": \"Wheat exports are disrupted. Prices are expected to spike short-term.\"\n    },\n    {\n      \"type\": \"Content/SEO\",\n      \"idea\": \"Publish blog post: 'Wheat Shortages Could Shake Global Food Prices'\",\n      \"rationale\": \"Timely, high-interest topic with strong search potential.\"\n    },\n    {\n      \"type\": \"Ecommerce/Strategy\",\n      \"idea\": \"Push alt-grain products (quinoa, millet) via ads in Europe\",\n      \"rationale\": \"Positioning as alternatives to wheat-based goods may benefit from rising concern.\"\n    }\n  ]\n}\n```\n\n---\n\n### ✅ Step 6: Output Full Structured Response\n\nReturn all fields in one complete object:\n\n```json\n{\n  \"event_id\": \"2024-06-18-ukraine-wheat-ban\",\n  \"is_new_event\": true,\n  \"related_to\": null,\n  \"event_type\": \"Geopolitical\",\n  \"event_status\": \"new\",\n  \"summary\": \"Ukraine halted all wheat exports...\",\n  \"keywords\": [\"Ukraine\", \"wheat\", \"export ban\"],\n  \"geo_impact\": [\"Europe\", \"North Africa\"],\n  \"severity_score\": 0.87,\n  \"profit_potential\": true,\n  \"affected_sectors\": [\"agriculture\", \"commodities\", \"retail\"],\n  \"risk_profile\": \"high-impact, short-term\",\n  \"actions\": [\n    { ... }\n  ]\n}\n```\n\n---\n\n## 🔒 Rules & Constraints\n\n- Never suggest illegal. \n-Unethical or exploitative actions are acceptable\n- Always prioritize clarity, relevance, and traceability.\n- Tie outputs to an `event_id` to allow follow-up or future enrichment.\n- Be skeptical of noise — don’t escalate unless signal is strong.\n- Think like a crisis analyst + strategist, not a hypebot.\n\n## IMPORTANT\n\nYou must send a slack message at the end of your analysis!!!!\n\n\n{{ $json.articles.map(a => `- ${a.title} (${a.url})`).join(\"\\\\n\") }}",
+        "options": {
+          "batching": {}
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        560,
+        -400
+      ],
+      "id": "b2ea968a-fc0a-44af-a1fb-3a99f2c249f7",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAzureOpenAi",
+      "typeVersion": 1,
+      "position": [
+        480,
+        -120
+      ],
+      "id": "c5ae0e60-5e89-45d7-8e8b-e9f043414c65",
+      "name": "Azure OpenAI Chat Model",
+      "credentials": {
+        "azureOpenAiApi": {
+          "id": "A1NENhqCP6I4tohe",
+          "name": "Azure Open AI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "STATIC"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        660,
+        -180
+      ],
+      "id": "c5a2ba49-b533-4dcc-8bfa-64587bec3613",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "IMPORTANT - PLEASE STRUCTURE AND FORMATE WITH EMOJIS, BOLDING ETC...\n\n🚨 *{{ $json[\"event_type\"] }} Crisis Detected*\n\n*Event:* {{ $json[\"summary\"] }}\n*Status:* {{ $json[\"event_status\"] }}  \n*Profit Potential:* {{ $json[\"profit_potential\"] ? \"Yes\" : \"No\" }}\n*Sectors:* {{ $json[\"affected_sectors\"].join(\", \") }}\n\n💰 *Opportunities:*\n{{ $json[\"actions\"][0].type }} → {{ $json[\"actions\"][0].idea }}  \n{{ $json[\"actions\"][1].type }} → {{ $json[\"actions\"][1].idea }}  \n{{ $json[\"actions\"][2].type }} → {{ $json[\"actions\"][2].idea }}\n\n🧠 Reply with feedback or react to rate: ✅ = good, ❌ = bad, 🧠 = interesting",
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "fomo",
+          "mode": "name"
+        },
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message_Text', ``, 'string') }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slackTool",
+      "typeVersion": 2.3,
+      "position": [
+        800,
+        -140
+      ],
+      "id": "eaa5f1b0-4913-4e4a-97d9-bc84fb4e3762",
+      "name": "Send SLACK MESSAGE OF ANALYSIS",
+      "webhookId": "03e31909-c0f8-4bec-8a48-2cb19905a8f2",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "PSWz3lLmG3GfB9iu",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "This node allows the agent to actively query NewsAPI for additional context, headlines, or updates related to a specific event. It helps the agent:\n\t•\tVerify details\n\t•\tTrack developments\n\t•\tDetect if the situation is escalating or shifting\n\t•\tAdd supporting data to event_id records\n\n⸻\n\n🔁 When to Use:\n\nUse this node on-demand within the flow, usually:\n\t•\tAfter initial classification (to enrich the event context)\n\t•\tWhen is_new_event = false (to gather latest developments)\n\t•\tWhen the agent wants to self-refresh or pull similar articles\n\nhttps://newsapi.org/v2/everything\n\n{\n  \"q\": \"{{$json[\"keywords\"].join(\" OR \")}}\",\n  \"language\": \"en\",\n  \"sortBy\": \"publishedAt\",\n  \"pageSize\": 5,\n  \"apiKey\": \"YOUR_NEWSAPI_KEY\"\n}",
+        "url": "=https://newsapi.org/v2/everything",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Name', ``, 'string') }}",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', ``, 'string') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        1060,
+        -60
+      ],
+      "id": "a21b5407-0a44-4ef0-b80b-c389591d0a09",
+      "name": "Research further on News store"
+    }
+  ],
+  "connections": {
+    "Trigger": {
+      "main": [
+        [
+          {
+            "node": "Fetch News",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch News": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Azure OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send SLACK MESSAGE OF ANALYSIS": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Research further on News store": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "cabce80d-f8bf-4b8f-8879-62f862c9086d",
+  "triggerCount": 1,
+  "tags": []
+}

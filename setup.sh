@@ -70,12 +70,13 @@ main() {
     
     # Test n8n sync script if n8n is running
     log_step "4. Testing n8n workflow sync..."
-    if curl -s http://localhost:5678/healthz > /dev/null 2>&1; then
-        log_info "n8n is running, testing workflow sync..."
-        ./n8n/scripts/sync_workflows.sh
-        log_info "Workflow sync test completed ✓"
+    log_info "Attempting to sync workflows (this will load your .env settings)..."
+    
+    if ./n8n/scripts/sync_workflows.sh; then
+        log_info "Workflow sync completed successfully ✓"
     else
-        log_warn "n8n is not running, skipping workflow sync test"
+        log_warn "Workflow sync failed or n8n not accessible"
+        log_info "This is normal if n8n isn't running or if you haven't created .env yet"
         log_info "To test later, run: ./n8n/scripts/sync_workflows.sh"
     fi
     

@@ -1,0 +1,68 @@
+name: n8n Workflow Sync
+
+on:
+  schedule:
+    # Run every day at 6 PM UTC (backup)
+    - cron: '0 18 * * *'
+  workflow_dispatch:
+    # Allow manual triggering
+    inputs:
+      sync_type:
+        description: 'Type of sync to perform'
+        required: true
+        default: 'pull'
+        type: choice
+        options:
+        - pull
+        - backup
+
+env:
+  N8N_API_KEY: ${{ secrets.N8N_API_KEY }}
+  N8N_API_URL: ${{ secrets.N8N_API_URL }}
+
+jobs:
+  sync-workflows:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Setup jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+      
+      - name: Create API key file
+        run: |
+          mkdir -p n8n/credentials
+          echo "$N8N_API_KEY" > n8n/credentials/api_key.txt
+      
+      - name: Make scripts executable
+        run: |
+          chmod +x n8n/scripts/sync_workflows.sh
+          chmod +x n8n/scripts/quick_export.sh
+      
+      - name: Backup workflows
+        if: github.event.inputs.sync_type == 'backup' || github.event_name == 'schedule'
+        run: |
+          ./n8n/scripts/sync_workflows.sh backup
+          
+      - name: Pull workflows
+        if: github.event.inputs.sync_type == 'pull' || github.event_name == 'schedule'
+        run: |
+          ./n8n/scripts/sync_workflows.sh pull
+      
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add n8n/workflows/
+          
+          if ! git diff --staged --quiet; then
+            git commit -m "Auto-sync n8n workflows - $(date '+%Y-%m-%d %H:%M:%S')"
+            git push
+            echo "✅ Workflows synced and pushed to GitHub"
+          else
+            echo "ℹ️ No changes to commit"
+          fi

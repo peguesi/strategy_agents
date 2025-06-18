@@ -1,3 +1,19 @@
+#!/bin/bash
+
+# Quick resolution of GitHub merge conflict
+
+echo "🔧 Resolving README merge conflict..."
+cd /Users/zeh/Local_Projects/Strategy_agents
+
+# Check what's in the conflicted README
+echo "📄 Current README conflict:"
+head -20 README.md
+
+echo ""
+echo "🛠️ Resolving conflict by keeping both versions..."
+
+# Create a new README that combines both
+cat > README.md << 'EOF'
 # Strategy Agents
 
 A comprehensive automation and strategic management system combining n8n workflows, Linear project management, and Screenpipe behavioral analysis to achieve €50k annual revenue targets.
@@ -104,3 +120,42 @@ Strategy_agents/
 ---
 
 *Part of the Pegues Innovations strategic automation initiative.*
+EOF
+
+echo "✅ README conflict resolved!"
+
+# Add all files and commit
+echo "📦 Adding all files..."
+git add .
+
+echo "💾 Committing resolved merge..."
+git commit -m "Resolve README merge conflict and sync n8n workflows
+
+- Merged remote README with local Strategy Agents infrastructure
+- Added complete n8n workflow sync system
+- Included both active workflows: v1 (Calamity Profiteer) and PM_Agent (Strategic PM)
+- Added automated GitHub backup system
+- Ready for strategic workflow management"
+
+if [ $? -eq 0 ]; then
+    echo "🚀 Pushing to GitHub..."
+    git push origin main
+    
+    if [ $? -eq 0 ]; then
+        echo ""
+        echo "🎉 SUCCESS! Everything synced to GitHub!"
+        echo ""
+        echo "🔗 View your repository:"
+        echo "https://github.com/peguesi/Strategy_agents"
+        echo ""
+        echo "📊 View your workflows:"
+        echo "https://github.com/peguesi/Strategy_agents/tree/main/n8n/workflows"
+        echo ""
+        echo "🎯 Next: Set up GitHub secrets for automated backups"
+        echo "Go to: https://github.com/peguesi/Strategy_agents/settings/secrets/actions"
+    else
+        echo "❌ Push failed"
+    fi
+else
+    echo "❌ Commit failed"
+fi

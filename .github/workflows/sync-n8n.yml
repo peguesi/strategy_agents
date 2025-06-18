@@ -1,0 +1,55 @@
+name: Sync n8n Workflows
+
+on:
+  schedule:
+    # Run every 6 hours to capture workflow changes
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+    # Allow manual triggering
+
+jobs:
+  sync-workflows:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+    
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y jq curl
+    
+    - name: Setup SSH for n8n access
+      if: ${{ secrets.N8N_SSH_KEY }}
+      uses: webfactory/ssh-agent@v0.8.0
+      with:
+        ssh-private-key: ${{ secrets.N8N_SSH_KEY }}
+    
+    - name: Sync workflows
+      env:
+        N8N_HOST: ${{ secrets.N8N_HOST || 'localhost' }}
+        N8N_PORT: ${{ secrets.N8N_PORT || '5678' }}
+        N8N_PROTOCOL: ${{ secrets.N8N_PROTOCOL || 'http' }}
+      run: |
+        chmod +x ./n8n/scripts/sync_workflows.sh
+        ./n8n/scripts/sync_workflows.sh
+    
+    - name: Commit and push changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add n8n/workflows/
+        if git diff --staged --quiet; then
+          echo "No workflow changes to commit"
+        else
+          git commit -m "Auto-sync n8n workflows $(date '+%Y-%m-%d %H:%M:%S')"
+          git push
+        fi

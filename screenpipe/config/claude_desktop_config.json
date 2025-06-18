@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "screenpipe-strategy": {
+      "command": "python3",
+      "args": ["/Users/zeh/Local_Projects/Strategy_agents/screenpipe/mcp/screenpipe_server.py"],
+      "env": {
+        "SCREENPIPE_API_URL": "http://localhost:3030",
+        "DATA_DIR": "/Users/zeh/Local_Projects/Strategy_agents/screenpipe/data"
+      }
+    }
+  }
+}

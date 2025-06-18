@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "screenpipe-strategy": {
+      "command": "/Users/zeh/Local_Projects/Strategy_agents/.venv/bin/python3",
+      "args": ["/Users/zeh/Local_Projects/Strategy_agents/screenpipe/mcp/screenpipe_server_stable.py"],
+      "env": {
+        "PYTHONPATH": "/Users/zeh/Local_Projects/Strategy_agents/screenpipe/mcp",
+        "PYTHONUNBUFFERED": "1"
+      }
+    }
+  }
+}

@@ -1,265 +1,346 @@
-# Strategy Agents v2.0 🎯
+# Strategy Agents Platform 🎯
 
-> **Complete strategic automation platform achieving €50k annual revenue through intelligent workflow management, behavioral analysis, and project optimization.**
+> **Complete strategic automation ecosystem enabling anyone to replicate and customize a €50k revenue-generating workflow automation platform.**
 
 [![n8n](https://img.shields.io/badge/n8n-Workflow%20Automation-orange)](https://n8n.io)
 [![Linear](https://img.shields.io/badge/Linear-Project%20Management-blue)](https://linear.app)
 [![Screenpipe](https://img.shields.io/badge/Screenpipe-Behavioral%20Analysis-green)](https://screenpipe.ai)
 [![Claude](https://img.shields.io/badge/Claude-AI%20Integration-purple)](https://claude.ai)
+[![MCP](https://img.shields.io/badge/MCP-Model%20Context%20Protocol-yellow)](https://modelcontextprotocol.io)
 
-## 🚀 What This Does
+## 🚀 What This Platform Provides
 
-Strategy Agents is a **production-ready automation platform** that transforms how you achieve strategic business goals through:
+**Strategy Agents** is a **production-ready, replicable automation framework** that transforms how you achieve strategic business goals through:
 
-- **🤖 Automated Intelligence**: AI agents that analyze news for profit opportunities and manage strategic projects
-- **📊 Behavioral Optimization**: Real-time analysis of work patterns to maximize productivity
-- **🎯 Revenue Focus**: Every workflow and task prioritized by revenue impact potential
-- **⚡ End-to-End Control**: Complete system management through Claude Desktop integration
+- **🤖 AI-Driven Intelligence**: Automated news analysis, project management, and strategic decision-making
+- **📊 Behavioral Optimization**: Real-time productivity analysis and work pattern optimization
+- **🎯 Revenue-Focused Design**: Every component prioritized by business impact potential
+- **⚡ Complete System Control**: Manage everything through Claude Desktop with MCP servers
+- **🔧 Fully Customizable**: Adapt every workflow, integration, and priority to your specific needs
 
-## ⭐ Key Achievements
+## ⭐ Platform Achievements
 
-✅ **€50k Revenue Target Framework** - Strategic prioritization system  
-✅ **Complete n8n Workflow Management** - Create, edit, execute, monitor via Claude  
-✅ **Behavioral Intelligence** - Screenpipe integration for productivity optimization  
-✅ **Linear Project Automation** - Strategic task management and tracking  
-✅ **Production-Ready Architecture** - Professional documentation and deployment
+✅ **€50k Revenue Framework** - Proven strategic prioritization methodology  
+✅ **Complete Workflow Control** - Create, edit, execute, monitor via Claude Desktop  
+✅ **Behavioral Intelligence** - Real-time productivity optimization system  
+✅ **Multi-Tool Integration** - Linear, n8n, Screenpipe, Azure, GitHub unified  
+✅ **Production Architecture** - Enterprise-grade documentation and deployment  
+✅ **Zero-Config Replication** - Complete setup automation for any environment
 
-## 🎯 Active Strategic Workflows
+## 🎯 Core Strategic Workflows
 
-### 1. Calamity Profiteer Agent 🟢 ACTIVE
-**Real-time news analysis and profit opportunity detection**
-- **Trigger**: Automated every 30 minutes
-- **Intelligence**: Azure OpenAI analysis of breaking news
-- **Action**: Slack alerts for immediate profit opportunities
-- **Memory**: Context retention for pattern recognition
+### 1. **Calamity Profiteer Agent** 🟢 ACTIVE
+**Real-time news analysis for profit opportunities**
+- **Intelligence**: Azure OpenAI analysis of breaking news every 30 minutes
+- **Action**: Automated Slack alerts for immediate business opportunities
+- **Memory**: Contextual pattern recognition and opportunity tracking
+- **Revenue Impact**: HIGH - Direct profit opportunity identification
 
-### 2. PM_Agent (Strategic Project Manager) 🔴 READY
-**Linear/Screenpipe integration for strategic management**
-- **Monitoring**: 30-minute behavioral analysis cycles
-- **Integration**: Screenpipe → Linear → Slack workflow
-- **Intelligence**: AI-driven project prioritization
-- **Focus**: €50k revenue goal tracking and optimization
+### 2. **PM_Agent (Strategic Project Manager)** 🔴 READY
+**Integrated project management with behavioral insights**
+- **Monitoring**: 30-minute behavioral analysis and task optimization
+- **Integration**: Screenpipe → Linear → Slack automated workflow
+- **Intelligence**: AI-driven project prioritization and resource allocation
+- **Revenue Impact**: HIGH - €50k goal tracking and strategic optimization
 
-## 🛠️ Technology Stack
+### 3. **Workflow Automation Engine** 🟡 CONFIGURABLE
+**Custom business process automation**
+- **Platform**: n8n-based workflow creation and management
+- **Intelligence**: Claude-controlled workflow design and optimization
+- **Integration**: Any API, service, or tool your business uses
+- **Revenue Impact**: MEDIUM-HIGH - Efficiency multiplier for all operations
 
-### Core Infrastructure
-- **n8n**: Workflow automation and AI agent orchestration
-- **Azure OpenAI**: Strategic intelligence and analysis
-- **PostgreSQL**: Data persistence and analytics
-- **Linear**: Strategic project management
-- **Screenpipe**: Behavioral analysis and optimization
+## 🛠️ Technology Architecture
 
-### Integration Layer
-- **Model Context Protocol (MCP)**: Complete system control via Claude
-- **GitHub Actions**: Automated workflows and backups
-- **Azure Cloud**: Scalable hosting and AI services
-- **Slack**: Real-time notifications and alerts
+### **Core Infrastructure**
+- **[n8n](https://n8n.io)** - Workflow automation and AI agent orchestration
+- **[Azure OpenAI](https://azure.microsoft.com/en-us/products/ai-services/openai-service)** - Strategic intelligence and analysis
+- **[PostgreSQL](https://www.postgresql.org)** - Data persistence and analytics
+- **[Linear](https://linear.app)** - Strategic project management and tracking
+- **[Screenpipe](https://screenpipe.ai)** - Behavioral analysis and productivity optimization
 
-## 🚀 Quick Start
+### **Integration & Control Layer**
+- **[Model Context Protocol (MCP)](https://modelcontextprotocol.io)** - Complete system control via Claude Desktop
+- **[GitHub Actions](https://github.com/features/actions)** - Automated workflows and continuous deployment
+- **[Azure Cloud](https://azure.microsoft.com)** - Scalable hosting and AI services
+- **[Slack](https://slack.com)** - Real-time notifications and team coordination
 
-### 1. Initial Setup
+### **Security & Configuration**
+- **Environment Variable Management** - Zero-hardcoded credentials
+- **Automated Security Auditing** - Regular credential scanning and validation
+- **GitHub Secrets Integration** - Encrypted CI/CD configuration
+- **Professional Documentation** - Complete setup and troubleshooting guides
+
+## 🏗️ Project Structure
+
+```
+Strategy_agents/
+├── 📋 GETTING_STARTED.md        # 👈 START HERE - Complete setup guide
+├── 🤖 mcp/                      # Model Context Protocol Servers
+│   ├── n8n/                     # Complete n8n workflow management
+│   ├── screenpipe/              # Behavioral analysis integration
+│   ├── linear/                  # Project management automation
+│   └── azure-postgresql/        # Database integration server
+├── ⚡ n8n/                      # Workflow Automation Platform
+│   ├── workflows/               # Production workflow definitions
+│   ├── scripts/                 # Workflow management utilities
+│   └── exports/                 # Backup and sharing configurations
+├── 👁️ screenpipe/               # Behavioral Analysis System
+│   ├── bin/                     # Control scripts and utilities
+│   ├── mcp/                     # Screenpipe MCP server
+│   └── data/                    # Behavioral data storage
+├── 📋 linear/                   # Project Management Integration
+│   ├── scripts/                 # Linear automation tools
+│   └── templates/               # Project templates and workflows
+├── 🔧 config/                   # Configuration Management
+│   ├── .env.example             # Environment variable template
+│   ├── requirements.txt         # Python dependencies
+│   └── claude-mcp-config.json   # Claude Desktop MCP configuration
+├── 📚 docs/                     # Comprehensive Documentation
+│   ├── SETUP.md                 # Detailed installation guide
+│   ├── ARCHITECTURE.md          # System design and relationships
+│   ├── API_REFERENCE.md         # Complete endpoint documentation
+│   └── CUSTOMIZATION.md         # Adaptation guide for different businesses
+├── 🔧 tools/                    # Development and Maintenance Tools
+│   ├── create-working-mcp-fix.py    # MCP server debugging utility
+│   ├── fix-applescript-interpolation.py  # macOS automation fixes
+│   └── fix-mcp-terminal-issues.py       # Terminal integration tools
+├── 🛡️ security/                 # Security and Audit Tools
+│   ├── security-audit.sh        # Comprehensive security scanner
+│   └── logs/                    # Security audit results
+├── 📝 examples/                 # Implementation Examples
+│   ├── SCREENPIPE_GUI_QUICKSTART.md     # Screenpipe setup guide
+│   ├── custom-workflows/                # Example business workflows
+│   └── integration-patterns/            # Common integration examples
+├── 🔧 scripts/                  # Project Management Scripts
+│   ├── setup.sh                 # One-command environment setup
+│   ├── test.sh                  # Comprehensive system testing
+│   ├── deploy.sh                # Production deployment
+│   └── cleanup.sh               # Project maintenance
+└── 🚀 .github/                  # CI/CD and Automation
+    └── workflows/               # GitHub Actions for testing and deployment
+```
+
+## 🚀 Quick Start (3 Paths)
+
+### Path 1: **Quick Technical Setup** ⚡
+Jump straight into setup: **[GETTING_STARTED.md](GETTING_STARTED.md)** - Step-by-step installation with Screenpipe focus
+
+### Path 2: **Business Customization** 💼  
+Customize for your business: **[BUSINESS_QUALIFICATION.md](BUSINESS_QUALIFICATION.md)** - Complete qualification survey for business needs
+
+### Path 3: **Technical Deep Dive** 🔧
+Full technical details: **[docs/SETUP.md](docs/SETUP.md)** - Comprehensive technical installation guide
+
+### 2. **Clone and Setup**
 ```bash
-# Clone and setup
-git clone <repository-url>
+git clone <your-repository-url>
 cd Strategy_agents
+chmod +x scripts/setup.sh
 ./scripts/setup.sh
 ```
 
-### 2. Configure Claude Desktop
+### 3. **Configure Claude Desktop**
+Copy the generated MCP configuration to your Claude Desktop settings:
 ```json
 {
   "mcpServers": {
     "n8n-complete": {
       "command": "/path/to/python3",
       "args": ["/path/to/Strategy_agents/mcp/n8n/n8n_complete_mcp_server.py"]
+    },
+    "screenpipe-terminal": {
+      "command": "/path/to/python3", 
+      "args": ["/path/to/Strategy_agents/mcp/screenpipe/screenpipe_mcp_server.py"]
+    },
+    "linear": {
+      "command": "/path/to/python3",
+      "args": ["/path/to/Strategy_agents/mcp/linear/linear_mcp_server.py"]
     }
   }
 }
 ```
 
-### 3. Test System
-```bash
-./scripts/test.sh
-```
+## 🎯 Revenue Priority Framework
 
-### 4. Activate Workflows
-Use Claude Desktop to manage workflows:
-- `n8n-complete:list-workflows` - View all workflows
-- `n8n-complete:health-monitor` - System health check
-- `n8n-complete:execute-workflow` - Run workflows manually
+### **High Revenue Priority** 💰💰💰
+- **Direct Client Work**: Immediately billable hours and deliverables
+- **Client Automation**: Revenue-generating workflow creation for clients
+- **Strategic Consulting**: High-value advisory and optimization services
+- **Product Development**: Scalable solutions with recurring revenue potential
 
-## 📁 Project Structure
-
-```
-Strategy_agents/
-├── 🤖 mcp/                     # Model Context Protocol Servers
-│   ├── n8n/                    # Complete n8n workflow management
-│   ├── screenpipe/             # Behavioral analysis integration
-│   └── azure-postgresql/       # Database integration
-├── ⚡ n8n/                     # n8n Workflow Automation
-│   ├── workflows/              # Production workflow definitions
-│   └── scripts/                # Workflow management tools
-├── 👁️ screenpipe/              # Behavioral Analysis System
-│   ├── bin/                    # Control scripts and utilities
-│   ├── mcp/                    # Screenpipe MCP server
-│   └── data/                   # Behavioral data storage
-├── 📋 linear/                  # Project Management Integration
-│   └── scripts/                # Linear automation tools
-├── 📚 docs/                    # Comprehensive Documentation
-│   ├── SETUP.md               # Detailed setup instructions
-│   ├── ARCHITECTURE.md        # System design overview
-│   └── API_REFERENCE.md       # Complete API documentation
-├── 🔧 scripts/                # Project Management Tools
-│   ├── setup.sh               # Initial environment setup
-│   ├── test.sh                # System testing suite
-│   └── cleanup.sh             # Project maintenance
-└── 🚀 .github/                # CI/CD and GitHub Integration
-    └── workflows/              # Automated testing and deployment
-```
-
-## 🎯 Strategic Revenue Framework
-
-### High Revenue Priority 💰
-- **Direct Client Work**: Immediately billable hours
-- **Client Automation**: Revenue-generating workflow creation
-- **Strategic Consulting**: High-value advisory services
-
-### Medium Revenue Priority 💼
-- **Framework Development**: Reusable client solutions
-- **Tool Integration**: Efficiency-multiplying automation
+### **Medium Revenue Priority** 💼💼
+- **Framework Development**: Reusable client solutions and templates
+- **Tool Integration**: Efficiency-multiplying automation systems
 - **Process Optimization**: Scalable workflow improvements
+- **Knowledge Products**: Documentation, courses, and methodology sales
 
-### Low Revenue Priority 🔧
-- **Research Tasks**: Knowledge building activities
-- **System Maintenance**: Infrastructure upkeep
-- **Documentation**: Process recording and sharing
+### **Low Revenue Priority** 🔧
+- **Research Tasks**: Knowledge building and exploration activities
+- **System Maintenance**: Infrastructure upkeep and optimization
+- **Documentation**: Process recording and knowledge sharing
+- **Community Building**: Open source contributions and networking
 
-## 🔧 Available Commands
+## 🔧 Available Commands (via Claude Desktop)
 
-### Workflow Management
+### **Workflow Management**
 ```bash
-# List all workflows with status
+# List all workflows with status and performance metrics
 n8n-complete:list-workflows
 
-# Execute workflow manually
+# Execute any workflow manually with monitoring
 n8n-complete:execute-workflow --workflow_id="PvXBGYpFiuuGkPk6"
 
-# Monitor system health
+# Monitor system health and performance
 n8n-complete:health-monitor
 
-# Get execution logs
+# Get detailed execution logs and debugging
 n8n-complete:get-execution-logs --execution_id="<id>"
+
+# Optimize workflow performance automatically
+n8n-complete:optimize-workflow --workflow_id="<id>"
 ```
 
-### System Administration
+### **Project Management**
 ```bash
-# Add new workflow node
-n8n-complete:add-node --workflow_id="<id>" --node_type="n8n-nodes-base.httpRequest"
+# List and manage Linear projects
+linear:list-projects
 
-# Update workflow configuration
-n8n-complete:update-workflow --workflow_id="<id>" --nodes="<config>"
+# Create strategic projects with revenue tracking
+linear:create-project --name="Q2 Revenue Campaign" --teamId="<team>"
 
-# Manage credentials
-n8n-complete:create-credential --name="api-key" --type="httpAuth"
+# Track and update project status
+linear:update-project --id="<project-id>" --status="In Progress"
+
+# Analyze project performance and ROI
+linear:get-project --query="Revenue Generation"
 ```
 
-## 📊 System Monitoring
-
-### Health Dashboard
-- **Workflow Status**: Active/inactive workflow tracking
-- **Execution Monitoring**: Success/failure rate analysis
-- **Performance Metrics**: Execution time and efficiency
-- **Error Tracking**: Real-time issue detection and resolution
-
-### Key Performance Indicators
-- **Revenue Impact**: Workflow contribution to €50k goal
-- **Automation Efficiency**: Manual work reduction percentage
-- **System Reliability**: Uptime and error rate metrics
-- **Strategic Alignment**: Goal-focused task completion rate
-
-## 🔒 Security & Configuration
-
-### Environment Variables Setup
-Create a `.env` file in the project root:
+### **Behavioral Analysis**
 ```bash
-# n8n Configuration
-N8N_API_KEY=your-n8n-api-key
-N8N_URL=https://your-n8n-instance.com
-N8N_USER=your-n8n-username
-N8N_PASS=your-n8n-password
+# Analyze productivity patterns
+screenpipe-terminal:analyze-productivity --hours_back=8
 
-# Linear Integration
-LINEAR_API_KEY=your-linear-api-key
-LINEAR_API_URL=https://api.linear.app/graphql
+# Find recent work sessions
+screenpipe-terminal:find-coding-sessions --hours_back=24
 
-# Azure Services
-AZURE_OPENAI_KEY=your-azure-openai-key
-AZURE_OPENAI_ENDPOINT=your-azure-endpoint
+# Search historical activity
+screenpipe-terminal:search-content --q="important meeting"
 ```
 
-### Security Features
-- ✅ **Environment Variables Only**: No hardcoded credentials
-- ✅ **Gitignore Protection**: `.env` files never committed
-- ✅ **Security Audit Script**: Regular credential scanning
-- ✅ **GitHub Secrets**: Encrypted CI/CD configuration
-- ✅ **Clean Repository**: Zero exposed API keys or tokens
+## 📊 System Monitoring & Analytics
 
-### Security Audit
-Run regular security checks:
+### **Performance Dashboard**
+- **Workflow Success Rate**: Track automation reliability and efficiency
+- **Revenue Impact Tracking**: Monitor progress toward financial goals
+- **Productivity Metrics**: Behavioral analysis and optimization insights
+- **System Health**: Real-time monitoring and automated issue resolution
+
+### **Strategic KPIs**
+- **Revenue Generation**: Direct monetary impact of automation
+- **Time Savings**: Hours saved through strategic automation
+- **Decision Quality**: AI-enhanced strategic choice outcomes
+- **System Reliability**: 99%+ uptime for critical business workflows
+
+## 🔒 Security & Best Practices
+
+### **Security Features**
+- ✅ **Zero Hardcoded Credentials**: All sensitive data in environment variables
+- ✅ **Automated Security Auditing**: Regular scanning and validation
+- ✅ **GitHub Secrets Integration**: Encrypted CI/CD configuration
+- ✅ **Clean Repository**: No exposed API keys, tokens, or credentials
+- ✅ **Professional Audit Trail**: Complete security logging and monitoring
+
+### **Configuration Management**
 ```bash
-# Comprehensive security scan
-./security-audit.sh
+# Copy environment template
+cp config/.env.example .env
 
-# Check for exposed credentials
-grep -r "api.*key\|secret\|token" . --exclude-dir=.venv --exclude-dir=.git
+# Run security audit before any commits
+./security/security-audit.sh
+
+# Test complete system integration
+./scripts/test.sh
+
+# Deploy to production environment
+./scripts/deploy.sh
 ```
 
-**⚠️ IMPORTANT**: 
-- Never commit API keys or credentials to git
-- Always use environment variables for sensitive data
-- Run `./security-audit.sh` before pushing changes
-- Regenerate any accidentally exposed keys immediately
+## 📚 Documentation & Support
 
-## 📚 Documentation
+### **Essential Documentation**
+- **[GETTING_STARTED.md](GETTING_STARTED.md)** - 👈 **START HERE** - Quick setup with Screenpipe focus
+- **[BUSINESS_QUALIFICATION.md](BUSINESS_QUALIFICATION.md)** - Business customization survey
+- **[docs/SETUP.md](docs/SETUP.md)** - Detailed technical installation guide
+- **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** - System design and component relationships
+- **[docs/CUSTOMIZATION.md](docs/CUSTOMIZATION.md)** - Adaptation guide for different businesses
+- **[docs/API_REFERENCE.md](docs/API_REFERENCE.md)** - Complete endpoint and command documentation
 
-- **[Complete Setup Guide](docs/SETUP.md)** - Detailed installation and configuration
-- **[System Architecture](docs/ARCHITECTURE.md)** - Component relationships and design
-- **[API Reference](docs/API_REFERENCE.md)** - Complete endpoint documentation
-- **[Troubleshooting](docs/TROUBLESHOOTING.md)** - Common issues and solutions
+### **Example Implementations**
+- **[examples/custom-workflows/](examples/custom-workflows/)** - Industry-specific automation examples
+- **[examples/integration-patterns/](examples/integration-patterns/)** - Common tool integration patterns
+- **[examples/revenue-tracking/](examples/revenue-tracking/)** - Financial goal monitoring examples
 
-## 🎯 Strategic Objectives
+## 🎯 Customization for Your Business
 
-### Primary Goals
-1. **€50k Annual Revenue**: Through strategic automation and optimization
-2. **Workflow Efficiency**: 80% reduction in manual strategic tasks
-3. **Intelligence Integration**: AI-driven decision making across all processes
-4. **Behavioral Optimization**: Data-driven productivity improvements
+This platform is designed to be **completely adaptable** to any business type, size, or industry. The **[GETTING_STARTED.md](GETTING_STARTED.md)** qualification survey will help you:
 
-### Success Metrics
-- **Revenue Growth**: Monthly progress toward €50k target
-- **Time Savings**: Hours saved through automation
-- **Decision Quality**: AI-enhanced strategic choices
-- **System Reliability**: 99%+ uptime for critical workflows
+- **Identify Your Tools**: Integrate with your existing software stack
+- **Define Your Workflows**: Map your business processes to automation
+- **Set Revenue Goals**: Establish specific financial targets and tracking
+- **Choose Your Integrations**: Select which MCP servers and tools you need
+- **Configure Your Environment**: Generate customized setup instructions
 
-## 🤝 Contributing
+### **Common Adaptations**
+- **Consulting Business**: Client project automation and billing optimization
+- **E-commerce**: Inventory management, customer service, and sales automation
+- **Agency**: Campaign management, client reporting, and resource allocation
+- **SaaS Company**: User onboarding, support automation, and growth tracking
+- **Freelancer**: Time tracking, project management, and income optimization
 
-This is a strategic business automation platform. For collaboration:
+## 🤝 Contributing & Collaboration
 
-1. **Review Architecture**: Understand system design in `docs/ARCHITECTURE.md`
-2. **Follow Standards**: Use established patterns for new components
-3. **Security First**: Run `./security-audit.sh` before committing
-4. **Environment Variables**: Never hardcode credentials
-5. **Test Thoroughly**: Ensure reliability with `scripts/test.sh`
-6. **Document Changes**: Update relevant documentation
+### **Adaptation Process**
+1. **Complete Qualification**: Fill out **[GETTING_STARTED.md](GETTING_STARTED.md)** survey
+2. **Review Architecture**: Understand system design in **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**
+3. **Follow Standards**: Use established patterns for consistency
+4. **Security First**: Run `./security/security-audit.sh` before any commits
+5. **Test Thoroughly**: Validate with `./scripts/test.sh` before deployment
+6. **Document Changes**: Update relevant documentation for others
 
-## 📄 License
+### **Collaboration Guidelines**
+- **Environment Variables Only**: Never commit credentials or API keys
+- **Professional Standards**: Maintain enterprise-grade code and documentation quality
+- **Business Focus**: Prioritize features by revenue impact potential
+- **Community Benefit**: Share anonymized patterns and templates for others
 
-Strategic business automation platform - All rights reserved.
+## 📄 License & Usage
+
+**Strategy Agents Platform** - Open framework for strategic business automation.
+
+- ✅ **Personal & Commercial Use**: Adapt for any business purpose
+- ✅ **Modification & Distribution**: Customize and share improvements
+- ✅ **Enterprise Implementation**: Scale for organizational deployment
+- ❌ **No Warranty**: Use at your own risk with proper testing
 
 ---
 
-**Strategy Agents v2.0** - *Transforming strategic goals into automated reality.*
+## 🚀 Ready to Start?
 
-🎯 **Goal**: €50k annual revenue through intelligent automation  
-⚡ **Method**: AI-driven workflows + behavioral optimization  
-🚀 **Result**: Professional-grade strategic business automation
+### **Next Steps:**
+1. **⚡ [Quick Setup](GETTING_STARTED.md)** - Fast technical setup with Screenpipe
+2. **💼 [Business Survey](BUSINESS_QUALIFICATION.md)** - Customize for your specific needs  
+3. **🔧 Run Setup**: Execute `./scripts/setup.sh` for automated installation
+4. **⚡ Test System**: Validate with `./scripts/test.sh` comprehensive testing
+5. **🎯 Deploy**: Launch with `./scripts/deploy.sh` production deployment
+6. **📊 Monitor**: Track progress through Claude Desktop MCP integration
+
+**Strategy Agents Platform** - *Transform your strategic goals into automated reality.*
+
+🎯 **Goal**: Scalable revenue generation through intelligent automation  
+⚡ **Method**: AI-driven workflows + behavioral optimization + strategic prioritization  
+🚀 **Result**: Professional-grade strategic business automation platform
+
+---
+
+**Questions?** Check **[docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)** or review **[examples/](examples/)** for implementation guidance.

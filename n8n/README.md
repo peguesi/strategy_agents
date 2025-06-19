@@ -118,7 +118,7 @@ n8n-complete:list-executions --limit=5
 ### Environment Variables
 ```bash
 # n8n Instance
-N8N_URL=https://n8n-agent-gdctd7f5e6e0a5br.eastus2-01.azurewebsites.net
+N8N_URL=your-n8n-url
 N8N_API_KEY=your-api-key-here
 
 # Azure OpenAI
@@ -253,4 +253,4 @@ n8n-complete:list-executions --limit=10
 
 **n8n Workflow Automation** - *Intelligent workflow orchestration for strategic business automation*
 
-Part of the Strategy Agents platform driving toward €50k annual revenue through AI-powered workflow automation.
+Part of the Strategy Agents platform driving toward €500k annual revenue through AI-powered workflow automation.

@@ -35,6 +35,7 @@ ENV/
 env.bak/
 venv.bak/
 *-venv/
+.venv/
 
 # Node.js
 node_modules/
@@ -45,14 +46,27 @@ lerna-debug.log*
 .pnpm-debug.log*
 
 # Logs
-logs
+logs/
 *.log
+security/*.log
 
 # Runtime data
 pids
 *.pid
 *.seed
 *.pid.lock
+
+# API Keys and Secrets (CRITICAL - NEVER COMMIT)
+*api*key*
+*secret*
+*token*
+*password*
+*credential*
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
 
 # Coverage directory used by tools like istanbul
 coverage/
@@ -101,10 +115,6 @@ public
 # Temporary folders
 tmp/
 temp/
-
-# Logs
-logs/
-*.log
 
 # Database
 *.db
@@ -158,3 +168,38 @@ mcp/*/logs/
 # Local configuration files
 config/local.*
 *.local.json
+
+# Security audit outputs
+security/security-*.log
+security/scan-results.*
+
+# Personal notes and private files
+TODO.md
+NOTES.md
+*.private.*
+*.personal.*
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Test output files
+test-results/
+coverage-reports/
+
+# Large data files
+*.csv
+*.xlsx
+*.json.bak
+data/raw/
+data/exports/
+
+# Claude Desktop config (contains API keys)
+config/claude_desktop_config.json
+
+# Private/Personal Archives (original business-specific files)
+linear/archive/
+**/archive/
+*.original.*
+*-original.*

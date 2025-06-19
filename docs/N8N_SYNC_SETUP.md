@@ -103,7 +103,7 @@ The GitHub workflow (`.github/workflows/n8n-sync.yml`) will:
 ### Required GitHub Secrets:
 Add these to your GitHub repository settings:
 
-1. `N8N_API_KEY` = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3MWM2ZjRiNC00ZTIwLTQ4YjUtODkyMi02NzUxNjMxMzJkZmEiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzUwMDc5MjQwfQ.1Tf5YHdlDrMObOM8fOw1bE19ltNfgo3ZVMJCITJejVs`
+1. `N8N_API_KEY` = `[Your N8N JWT Token - get from .env file]`
 
 2. `N8N_API_URL` = `https://n8n-agent-gdctd7f5e6e0a5br.eastus2-01.azurewebsites.net:443/api/v1`
 

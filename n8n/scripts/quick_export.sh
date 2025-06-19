@@ -6,18 +6,11 @@
 N8N_API_URL="https://n8n-agent-gdctd7f5e6e0a5br.eastus2-01.azurewebsites.net:443/api/v1"
 WORKFLOWS_DIR="/Users/zeh/Local_Projects/Strategy_agents/n8n/workflows"
 
-# Extract API key from raw.log (backup method)
-if [ -f "/Users/zeh/Local_Projects/Strategy_agents/n8n/scripts/raw.log" ]; then
-    N8N_API_KEY=$(grep -o 'eyJhbGciOiJIUzI1NiIs[^"]*' /Users/zeh/Local_Projects/Strategy_agents/n8n/scripts/raw.log | head -1)
-fi
-
-# Fallback to environment variable
-if [ -z "$N8N_API_KEY" ] && [ ! -z "$N8N_API_KEY_ENV" ]; then
-    N8N_API_KEY="$N8N_API_KEY_ENV"
-fi
-
+# Get API key from environment variable
 if [ -z "$N8N_API_KEY" ]; then
-    echo "❌ No API key found. Please set N8N_API_KEY environment variable."
+    echo "❌ Error: N8N_API_KEY environment variable is required"
+    echo "Please set it in your .env file or export it:"
+    echo "export N8N_API_KEY='your_api_key_here'"
     exit 1
 fi
 

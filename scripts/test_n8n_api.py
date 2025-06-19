@@ -5,9 +5,20 @@ Quick test script to verify n8n API connection
 import requests
 import json
 
-# Configuration
-N8N_URL = "https://n8n-agent-gdctd7f5e6e0a5br.eastus2-01.azurewebsites.net"
-API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3MWM2ZjRiNC00ZTIwLTQ4YjUtODkyMi02NzUxNjMxMzJkZmEiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzUwMDc5MjQwfQ.1Tf5YHdlDrMObOM8fOw1bE19ltNfgo3ZVMJCITJejVs"
+# Configuration from environment variables
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+N8N_URL = os.getenv('N8N_URL', 'https://n8n-agent-gdctd7f5e6e0a5br.eastus2-01.azurewebsites.net')
+API_KEY = os.getenv('N8N_API_KEY')
+
+if not API_KEY:
+    print('❌ Error: N8N_API_KEY environment variable is required')
+    print('Please set it in your .env file or export it:')
+    print('export N8N_API_KEY="your_api_key_here"')
+    exit(1)
 
 # Headers
 headers = {

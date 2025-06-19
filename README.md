@@ -179,14 +179,18 @@ n8n-complete:create-credential --name="api-key" --type="httpAuth"
 
 ## 🔒 Security & Configuration
 
-### Environment Variables
+### Environment Variables Setup
+Create a `.env` file in the project root:
 ```bash
 # n8n Configuration
 N8N_API_KEY=your-n8n-api-key
 N8N_URL=https://your-n8n-instance.com
+N8N_USER=your-n8n-username
+N8N_PASS=your-n8n-password
 
 # Linear Integration
 LINEAR_API_KEY=your-linear-api-key
+LINEAR_API_URL=https://api.linear.app/graphql
 
 # Azure Services
 AZURE_OPENAI_KEY=your-azure-openai-key
@@ -194,10 +198,27 @@ AZURE_OPENAI_ENDPOINT=your-azure-endpoint
 ```
 
 ### Security Features
-- **Local Credential Storage**: Secure API key management
-- **GitHub Secrets**: Encrypted CI/CD configuration
-- **No Sensitive Data**: Clean repository with secure externals
-- **Access Control**: Role-based MCP server permissions
+- ✅ **Environment Variables Only**: No hardcoded credentials
+- ✅ **Gitignore Protection**: `.env` files never committed
+- ✅ **Security Audit Script**: Regular credential scanning
+- ✅ **GitHub Secrets**: Encrypted CI/CD configuration
+- ✅ **Clean Repository**: Zero exposed API keys or tokens
+
+### Security Audit
+Run regular security checks:
+```bash
+# Comprehensive security scan
+./security-audit.sh
+
+# Check for exposed credentials
+grep -r "api.*key\|secret\|token" . --exclude-dir=.venv --exclude-dir=.git
+```
+
+**⚠️ IMPORTANT**: 
+- Never commit API keys or credentials to git
+- Always use environment variables for sensitive data
+- Run `./security-audit.sh` before pushing changes
+- Regenerate any accidentally exposed keys immediately
 
 ## 📚 Documentation
 
@@ -226,8 +247,10 @@ This is a strategic business automation platform. For collaboration:
 
 1. **Review Architecture**: Understand system design in `docs/ARCHITECTURE.md`
 2. **Follow Standards**: Use established patterns for new components
-3. **Test Thoroughly**: Ensure reliability with `scripts/test.sh`
-4. **Document Changes**: Update relevant documentation
+3. **Security First**: Run `./security-audit.sh` before committing
+4. **Environment Variables**: Never hardcode credentials
+5. **Test Thoroughly**: Ensure reliability with `scripts/test.sh`
+6. **Document Changes**: Update relevant documentation
 
 ## 📄 License
 

@@ -7,7 +7,7 @@ set -e
 
 # Configuration
 N8N_API_URL="https://n8n-agent-gdctd7f5e6e0a5br.eastus2-01.azurewebsites.net:443/api/v1"
-N8N_API_KEY_FILE="/Users/zeh/Local_Projects/Strategy_agents/n8n/credentials/api_key.txt"
+# N8N_API_KEY now comes from environment variable
 WORKFLOWS_DIR="/Users/zeh/Local_Projects/Strategy_agents/n8n/workflows"
 REPO_DIR="/Users/zeh/Local_Projects/Strategy_agents"
 
@@ -35,19 +35,11 @@ log_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
-# Check if API key file exists
-if [ ! -f "$N8N_API_KEY_FILE" ]; then
-    log_error "API key file not found at $N8N_API_KEY_FILE"
-    log_info "Creating API key file from environment..."
-    mkdir -p "$(dirname "$N8N_API_KEY_FILE")"
-    echo "$N8N_API_KEY" > "$N8N_API_KEY_FILE"
-fi
-
-# Read API key
-N8N_API_KEY=$(cat "$N8N_API_KEY_FILE")
-
+# Get API key from environment variable
 if [ -z "$N8N_API_KEY" ]; then
-    log_error "API key is empty. Please check your credentials."
+    log_error "N8N_API_KEY environment variable is required"
+    log_info "Please set it in your .env file or export it:"
+    log_info "export N8N_API_KEY='your_api_key_here'"
     exit 1
 fi
 

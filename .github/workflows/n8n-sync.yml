@@ -33,10 +33,11 @@ jobs:
       - name: Setup jq
         run: sudo apt-get update && sudo apt-get install -y jq
       
-      - name: Create API key file
+      - name: Setup environment
         run: |
-          mkdir -p n8n/credentials
-          echo "$N8N_API_KEY" > n8n/credentials/api_key.txt
+          # Export environment variables for scripts
+          echo "N8N_API_KEY=$N8N_API_KEY" >> $GITHUB_ENV
+          echo "N8N_API_URL=$N8N_API_URL" >> $GITHUB_ENV
       
       - name: Make scripts executable
         run: |

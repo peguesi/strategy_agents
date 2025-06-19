@@ -1,8 +1,18 @@
 // Linear Initiative & Project Updates - Focused Script
 // Handles the missing pieces: initiative assignment, project descriptions, project updates
 
-const LINEAR_API_KEY = "lin_api_OHgGohaipIJxpFsF7Dbn1ZI9YeGflzKnlN3cNOW2";
-const LINEAR_API_URL = "https://api.linear.app/graphql";
+// Load environment variables
+require('dotenv').config({ path: '../.env' });
+
+const LINEAR_API_KEY = process.env.LINEAR_API_KEY;
+const LINEAR_API_URL = process.env.LINEAR_API_URL || "https://api.linear.app/graphql";
+
+if (!LINEAR_API_KEY) {
+  console.error('❌ Error: LINEAR_API_KEY environment variable is required');
+  console.error('Please set it in your .env file or export it:');
+  console.error('export LINEAR_API_KEY="your_api_key_here"');
+  process.exit(1);
+}
 
 
 

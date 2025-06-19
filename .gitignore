@@ -117,6 +117,9 @@ screenpipe/logs/
 
 # n8n credentials (sensitive)
 n8n/credentials/*.json
+n8n/credentials/*.txt
+n8n/credentials/*.key
+n8n/credentials/*.secret
 !n8n/credentials/README.md
 
 # MCP server logs

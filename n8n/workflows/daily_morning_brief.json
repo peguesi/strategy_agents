@@ -1,0 +1,208 @@
+{
+  "name": "Daily Morning Strategic Brief",
+  "nodes": [
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "channel": "lock-the-fuck-in",
+        "text": "=🤖 **Strategic Activity Report**  {{ $json.output }}",
+        "otherOptions": {},
+        "attachments": []
+      },
+      "id": "2263a941-65ba-4baa-8510-69ac7af66bdb",
+      "name": "Slack - Morning Brief",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 1,
+      "position": [100, -360],
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "PSWz3lLmG3GfB9iu",
+          "name": "Slack account"
+        }
+      },
+      "disabled": false
+    },
+    {
+      "parameters": {
+        "model": "o3-mini",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAzureOpenAi",
+      "typeVersion": 1,
+      "position": [-600, -160],
+      "id": "369fc9cb-e458-4387-8407-78cc4d813a06",
+      "name": "Azure OpenAI Chat Model",
+      "credentials": {
+        "azureOpenAiApi": {
+          "id": "A1NENhqCP6I4tohe",
+          "name": "Azure Open AI account"
+        }
+      },
+      "disabled": false
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "# Daily Strategic Focus Agent\n\nYou are Isaiah's Daily Focus Agent. Give him ONE clear task for TODAY.\n\n## OUTPUT FORMAT (EXACTLY):\n```\n📅 **June 20, 2025**\n\n🎯 **PRIMARY FOCUS**: PEG-XX Task Name\n⏰ **TIME**: X hours deep work\n💰 **REVENUE**: How this advances €50k goal\n\n🔥 **URGENT**: Any blockers\n✅ **QUICK**: 1-2 small tasks\n\n**That's it. Execute.**\n```\n\n## RULES:\n1. ALWAYS query Linear for Crisis Profit Signals project issues (deadline July 3rd)\n2. Pick ONE most important task for today\n3. Keep under 150 words total\n4. Use EXACT format above\n5. Give decisions, not analysis\n\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [-360, -360],
+      "id": "9805d8d8-ca56-4da5-bc27-58afdb499213",
+      "name": "AI Agent",
+      "disabled": false
+    },
+    {
+      "parameters": {
+        "toolDescription": "Screenpipe Analysis Tool for productivity insights",
+        "url": "https://28fc-2a0d-3344-1514-af10-35ec-bb77-7913-dcf.ngrok-free.app/search",
+        "sendQuery": true,
+        "parametersQuery": {"values": [{}]}
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1,
+      "position": [-240, -140],
+      "id": "dd9dc52f-c9cd-45e4-b469-df260af5096f",
+      "name": "Screenpipe Search Tool",
+      "disabled": false
+    },
+    {
+      "parameters": {
+        "toolDescription": "Linear GraphQL API for project management",
+        "authentication": "headerAuth",
+        "endpoint": "https://api.linear.app/graphql",
+        "allowUnauthorizedCerts": false,
+        "query": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Query', ``, 'string') }}",
+        "variables": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Variables', ``, 'json') }}",
+        "operationName": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Operation_Name', ``, 'string') }}"
+      },
+      "type": "n8n-nodes-base.graphqlTool",
+      "typeVersion": 1.1,
+      "position": [-20, -140],
+      "id": "03d6b7c9-43d0-4a9b-85a9-e421796df226",
+      "name": "Linear GraphQL",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "RqzA9K1en4hbNrIt",
+          "name": "Linear Header"
+        }
+      },
+      "disabled": false
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "strategic-agent-postgres-memory"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [-440, -140],
+      "id": "1d7e7c63-0490-4efa-8f2c-a37328bd01d1",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "3oz0ltOQQdW3ISML",
+          "name": "Postgres account"
+        }
+      },
+      "disabled": false
+    },
+    {
+      "parameters": {
+        "triggerTimes": {
+          "item": [
+            {
+              "mode": "custom",
+              "cronExpression": "0 7 * * 1-5"
+            }
+          ]
+        }
+      },
+      "id": "cbe1b8ac-48c0-4f39-9e82-733fe8a10b63",
+      "name": "Daily Morning Brief - 7 AM",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1,
+      "position": [-680, -360],
+      "disabled": false
+    }
+  ],
+  "connections": {
+    "Azure OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Slack - Morning Brief",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Screenpipe Search Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Linear GraphQL": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Daily Morning Brief - 7 AM": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Zurich",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": []
+}

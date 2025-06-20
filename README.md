@@ -69,6 +69,14 @@
 - **Environment Variable Management** - Zero-hardcoded credentials
 - **Automated Security Auditing** - Regular credential scanning and validation
 - **GitHub Secrets Integration** - Encrypted CI/CD configuration
+- **Automated CI/CD Pipelines** - GitHub Actions for:
+    - **Python Code Quality**: Linting (Flake8), formatting (Black), static type checking (Mypy), and automated tests (Pytest) run on every push and pull request.
+    - **Security Scanning**:
+        - Dependency vulnerability checks (pip-audit).
+        - Static Application Security Testing (Bandit).
+        - Filesystem vulnerability scanning (Trivy).
+        - Results integrated into GitHub Security tab.
+    - **n8n Workflow Sync**: Automated synchronization of n8n workflows.
 - **Professional Documentation** - Complete setup and troubleshooting guides
 
 ## 🏗️ Project Structure
@@ -118,7 +126,10 @@ Strategy_agents/
 │   ├── deploy.sh                # Production deployment
 │   └── cleanup.sh               # Project maintenance
 └── 🚀 .github/                  # CI/CD and Automation
-    └── workflows/               # GitHub Actions for testing and deployment
+    └── workflows/               # GitHub Actions for:
+                                 #   - Python CI (linting, testing, type-checking, formatting)
+                                 #   - Security Scanning (dependencies, code, filesystem)
+                                 #   - n8n workflow synchronization
 ```
 
 ## 🚀 Quick Start (3 Paths)

@@ -1,0 +1,615 @@
+{
+  "name": "update_embeddings_enhanced",
+  "nodes": [
+    {
+      "parameters": {
+        "functionCode": "// Universal content extraction and chunking for embeddings\nconst data = items[0].json;\nconst tableName = data.table || 'unknown';\nconst maxChunkSize = 8000; // Azure OpenAI text-embedding-3-small limit\n\n// Extract content based on table type\nlet content = '';\nlet contentId = data.id || data.conversation_id;\n\nswitch(tableName) {\n  case 'agent_conversations':\n    content = data.content || '';\n    break;\n  case 'agent_outcomes':\n    content = data.suggestion_text || '';\n    break;\n  case 'agent_patterns':\n    content = data.pattern_description || data.behavior_pattern || '';\n    break;\n  case 'agent_preferences':\n    content = data.preference_value || data.preference_description || '';\n    break;\n  case 'n8n_chat_histories':\n    content = data.message || data.content || '';\n    break;\n  default:\n    content = data.content || data.text || JSON.stringify(data);\n}\n\n// Enhanced sentence-based chunking with context preservation\nconst sentences = content.split(/[.!?]+/).filter(s => s.trim().length > 0);\nconst chunks = [];\nlet currentChunk = '';\n\nfor (const sentence of sentences) {\n  const potentialChunk = currentChunk + (currentChunk ? '. ' : '') + sentence;\n  \n  if (potentialChunk.length > maxChunkSize && currentChunk.length > 0) {\n    chunks.push(currentChunk.trim());\n    currentChunk = sentence;\n  } else {\n    currentChunk = potentialChunk;\n  }\n}\n\nif (currentChunk.trim().length > 0) {\n  chunks.push(currentChunk.trim());\n}\n\n// Use first chunk for embedding (can enhance for multiple chunks later)\nconst textToEmbed = chunks.length > 0 ? chunks[0] : content;\n\nreturn {\n  table_name: tableName,\n  record_id: contentId,\n  text_to_embed: textToEmbed,\n  original_content: content,\n  chunk_count: chunks.length,\n  content_length: content.length\n};"
+      },
+      "id": "f946c1cd-5bb2-429d-aecb-ef644109f24d",
+      "name": "Universal Content Processor",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        260,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://strategy.openai.azure.com/openai/deployments/text-embedding-3-small/embeddings?api-version=2023-05-15",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "azureOpenAiApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "input",
+              "value": "={{ $json.text_to_embed }}"
+            },
+            {
+              "name": "model",
+              "value": "text-embedding-3-small"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "75ccd381-53b9-4e66-8f90-13dd19e38706",
+      "name": "Generate Embedding",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        480,
+        500
+      ],
+      "credentials": {
+        "azureOpenAiApi": {
+          "id": "RcBEirZgApkPGwZF",
+          "name": "Azure Open AI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Process embedding response and route to appropriate storage\nconst items = $input.all();\nconst results = [];\n\nfor (const item of items) {\n  const response = item.json;\n  const tableName = $input.first().json.table_name;\n  const recordId = $input.first().json.record_id;\n  \n  if (response.data && response.data.length > 0) {\n    const embedding = response.data[0].embedding;\n    \n    // Format embedding as PostgreSQL vector string\n    const embeddingVector = '[' + embedding.join(',') + ']';\n    \n    results.push({\n      table_name: tableName,\n      record_id: recordId,\n      embedding: embeddingVector,\n      embedding_length: embedding.length,\n      success: true,\n      timestamp: new Date().toISOString()\n    });\n  } else {\n    results.push({\n      table_name: tableName,\n      record_id: recordId,\n      embedding: null,\n      error: 'No embedding returned',\n      success: false,\n      timestamp: new Date().toISOString()\n    });\n  }\n}\n\nreturn results.map(result => ({ json: result }));"
+      },
+      "id": "db32cb84-f8af-4184-8fa7-bd3feb9dd74e",
+      "name": "Process Embedding Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        700,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "conversations",
+              "leftValue": "={{ $json.table_name }}",
+              "rightValue": "agent_conversations",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "outcomes",
+              "leftValue": "={{ $json.table_name }}",
+              "rightValue": "agent_outcomes",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "patterns",
+              "leftValue": "={{ $json.table_name }}",
+              "rightValue": "agent_patterns",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "preferences",
+              "leftValue": "={{ $json.table_name }}",
+              "rightValue": "agent_preferences",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "chat_histories",
+              "leftValue": "={{ $json.table_name }}",
+              "rightValue": "n8n_chat_histories",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combineOperation": "any"
+        },
+        "options": {}
+      },
+      "id": "route-to-storage",
+      "name": "Route to Storage",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        920,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE agent_conversations SET embedding = $1::vector WHERE conversation_id = $2",
+        "options": {}
+      },
+      "id": "store-conversations",
+      "name": "Store Agent Conversations",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1140,
+        300
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "REbpvUhlVsmjWCKA",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE agent_outcomes SET suggestion_embedding = $1::vector WHERE id = $2",
+        "options": {}
+      },
+      "id": "store-outcomes",
+      "name": "Store Agent Outcomes",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1140,
+        400
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "REbpvUhlVsmjWCKA",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE agent_patterns SET pattern_embedding = $1::vector WHERE id = $2",
+        "options": {}
+      },
+      "id": "store-patterns",
+      "name": "Store Agent Patterns",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1140,
+        500
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "REbpvUhlVsmjWCKA",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE agent_preferences SET preference_embedding = $1::vector WHERE id = $2",
+        "options": {}
+      },
+      "id": "store-preferences",
+      "name": "Store Agent Preferences",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1140,
+        600
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "REbpvUhlVsmjWCKA",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE n8n_chat_histories SET message_embedding = $1::vector WHERE id = $2",
+        "options": {}
+      },
+      "id": "store-chat-histories",
+      "name": "Store Chat Histories",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        1140,
+        700
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "REbpvUhlVsmjWCKA",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "tableName": {
+          "__rl": true,
+          "value": "agent_conversations",
+          "mode": "list",
+          "cachedResultName": "agent_conversations"
+        },
+        "additionalFields": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgresTrigger",
+      "typeVersion": 1,
+      "position": [
+        -180,
+        100
+      ],
+      "id": "trigger-conversations",
+      "name": "Trigger: Agent Conversations",
+      "credentials": {
+        "postgres": {
+          "id": "REbpvUhlVsmjWCKA",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "tableName": {
+          "__rl": true,
+          "value": "agent_outcomes",
+          "mode": "list",
+          "cachedResultName": "agent_outcomes"
+        },
+        "additionalFields": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgresTrigger",
+      "typeVersion": 1,
+      "position": [
+        -180,
+        200
+      ],
+      "id": "trigger-outcomes",
+      "name": "Trigger: Agent Outcomes",
+      "credentials": {
+        "postgres": {
+          "id": "REbpvUhlVsmjWCKA",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "tableName": {
+          "__rl": true,
+          "value": "agent_patterns",
+          "mode": "list",
+          "cachedResultName": "agent_patterns"
+        },
+        "additionalFields": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgresTrigger",
+      "typeVersion": 1,
+      "position": [
+        -180,
+        300
+      ],
+      "id": "trigger-patterns",
+      "name": "Trigger: Agent Patterns",
+      "credentials": {
+        "postgres": {
+          "id": "REbpvUhlVsmjWCKA",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "tableName": {
+          "__rl": true,
+          "value": "agent_preferences",
+          "mode": "list",
+          "cachedResultName": "agent_preferences"
+        },
+        "additionalFields": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgresTrigger",
+      "typeVersion": 1,
+      "position": [
+        -180,
+        400
+      ],
+      "id": "trigger-preferences",
+      "name": "Trigger: Agent Preferences",
+      "credentials": {
+        "postgres": {
+          "id": "REbpvUhlVsmjWCKA",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "tableName": {
+          "__rl": true,
+          "value": "n8n_chat_histories",
+          "mode": "list",
+          "cachedResultName": "n8n_chat_histories"
+        },
+        "additionalFields": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgresTrigger",
+      "typeVersion": 1,
+      "position": [
+        -180,
+        500
+      ],
+      "id": "trigger-chat-histories",
+      "name": "Trigger: Chat Histories",
+      "credentials": {
+        "postgres": {
+          "id": "REbpvUhlVsmjWCKA",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Success notification with table-specific logging\nconst tableName = $input.first().json.table_name;\nconst recordId = $input.first().json.record_id;\nconst success = $input.first().json.success;\n\nconst logMessage = {\n  timestamp: new Date().toISOString(),\n  action: 'embedding_stored',\n  table: tableName,\n  record_id: recordId,\n  success: success,\n  workflow: 'update_embeddings_enhanced'\n};\n\nconsole.log(`✅ Embedding stored for ${tableName}:${recordId}`, logMessage);\n\nreturn { json: logMessage };"
+      },
+      "id": "success-notification",
+      "name": "Success Notification",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1360,
+        500
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Universal Content Processor": {
+      "main": [
+        [
+          {
+            "node": "Generate Embedding",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Embedding": {
+      "main": [
+        [
+          {
+            "node": "Process Embedding Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Embedding Response": {
+      "main": [
+        [
+          {
+            "node": "Route to Storage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route to Storage": {
+      "main": [
+        [
+          {
+            "node": "Store Agent Conversations",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Store Agent Outcomes",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Store Agent Patterns",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Store Agent Preferences",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Store Chat Histories",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger: Agent Conversations": {
+      "main": [
+        [
+          {
+            "node": "Universal Content Processor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger: Agent Outcomes": {
+      "main": [
+        [
+          {
+            "node": "Universal Content Processor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger: Agent Patterns": {
+      "main": [
+        [
+          {
+            "node": "Universal Content Processor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger: Agent Preferences": {
+      "main": [
+        [
+          {
+            "node": "Universal Content Processor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger: Chat Histories": {
+      "main": [
+        [
+          {
+            "node": "Universal Content Processor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Agent Conversations": {
+      "main": [
+        [
+          {
+            "node": "Success Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Agent Outcomes": {
+      "main": [
+        [
+          {
+            "node": "Success Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Agent Patterns": {
+      "main": [
+        [
+          {
+            "node": "Success Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Agent Preferences": {
+      "main": [
+        [
+          {
+            "node": "Success Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Chat Histories": {
+      "main": [
+        [
+          {
+            "node": "Success Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "enhanced-hybrid-memory-v1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "54ccffa35c7ec1709805558df90257e91833ae172533cc7aea7eaa7d1e4daef6"
+  },
+  "id": "enhanced-auto-embedding",
+  "tags": ["embeddings", "hybrid-memory", "auto-generation"]
+}

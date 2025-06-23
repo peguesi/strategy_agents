@@ -1,0 +1,674 @@
+{
+  "name": "update_embeddings_FIXED",
+  "nodes": [
+    {
+      "parameters": {
+        "functionCode": "// Universal content extraction and chunking for embeddings\nconst data = items[0].json;\nlet tableName = 'unknown';\nlet content = '';\nlet recordId = null;\nlet idField = null;\n\n// Determine table and extract content from trigger data\nif (data.conversation_id) {\n  tableName = 'agent_conversations';\n  recordId = data.conversation_id;\n  idField = 'conversation_id';\n  content = data.content || '';\n} else if (data.suggestion_id) {\n  tableName = 'agent_outcomes';\n  recordId = data.suggestion_id;\n  idField = 'suggestion_id';\n  content = data.suggestion_text || '';\n} else if (data.pattern_type || data.description) {\n  tableName = 'agent_patterns';\n  recordId = data.id;\n  idField = 'id';\n  content = data.description || data.pattern_type || '';\n} else if (data.preference_key || data.preference_value) {\n  tableName = 'agent_preferences';\n  recordId = data.id;\n  idField = 'id';\n  content = JSON.stringify(data.preference_value) || data.preference_key || '';\n} else if (data.message) {\n  tableName = 'n8n_chat_histories';\n  recordId = data.id;\n  idField = 'id';\n  content = JSON.stringify(data.message) || '';\n} else {\n  // Fallback\n  tableName = 'unknown';\n  recordId = data.id;\n  idField = 'id';\n  content = JSON.stringify(data);\n}\n\n// Enhanced sentence-based chunking\nconst maxChunkSize = 8000;\nconst sentences = content.split(/[.!?]+/).filter(s => s.trim().length > 0);\nconst chunks = [];\nlet currentChunk = '';\n\nfor (const sentence of sentences) {\n  const potentialChunk = currentChunk + (currentChunk ? '. ' : '') + sentence.trim();\n  \n  if (potentialChunk.length > maxChunkSize && currentChunk.length > 0) {\n    chunks.push(currentChunk.trim());\n    currentChunk = sentence.trim();\n  } else {\n    currentChunk = potentialChunk;\n  }\n}\n\nif (currentChunk.trim().length > 0) {\n  chunks.push(currentChunk.trim());\n}\n\n// Use first chunk for embedding\nconst textToEmbed = chunks.length > 0 ? chunks[0] : content;\n\nreturn {\n  ...data, // Pass through ALL original trigger data\n  table_name: tableName,\n  record_id: String(recordId),\n  id_field: idField,\n  text_to_embed: textToEmbed,\n  original_content: content,\n  chunk_count: chunks.length,\n  content_length: content.length\n};"
+      },
+      "id": "b8c24682-0e7a-4fca-b91c-50d7a6ca9985",
+      "name": "Universal Content Processor",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -180
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://strategy.openai.azure.com/openai/deployments/text-embedding-3-small/embeddings?api-version=2023-05-15",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "azureOpenAiApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "input",
+              "value": "={{ $json.text_to_embed }}"
+            },
+            {
+              "name": "model",
+              "value": "text-embedding-3-small"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "3bf12e03-416f-473c-944a-72bef3a7efab",
+      "name": "Generate Embedding",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        220,
+        -180
+      ],
+      "credentials": {
+        "azureOpenAiApi": {
+          "id": "RcBEirZgApkPGwZF",
+          "name": "Azure Open AI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Process embedding response and include original trigger data\nconst items = $input.all();\nconst results = [];\n\nfor (const item of items) {\n  const response = item.json;\n  const originalData = $input.first().json;\n  \n  if (response.data && response.data.length > 0) {\n    const embedding = response.data[0].embedding;\n    \n    // Format embedding as PostgreSQL vector string\n    const embeddingVector = '[' + embedding.join(',') + ']';\n    \n    // Pass through all original data plus the new embedding\n    results.push({\n      ...originalData, // Include all original trigger data\n      embedding: embeddingVector,\n      embedding_length: embedding.length,\n      success: true,\n      timestamp: new Date().toISOString()\n    });\n  } else {\n    results.push({\n      ...originalData,\n      embedding: null,\n      error: 'No embedding returned',\n      success: false,\n      timestamp: new Date().toISOString()\n    });\n  }\n}\n\nreturn results.map(result => ({ json: result }));"
+      },
+      "id": "11d2e2ce-6707-4532-ab4e-539a3230ea5b",
+      "name": "Process Embedding Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        -180
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.table_name }}",
+                    "rightValue": "agent_conversations",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "agent_conversations"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.table_name }}",
+                    "rightValue": "agent_outcomes",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "agent_outcomes"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.table_name }}",
+                    "rightValue": "agent_patterns",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "agent_patterns"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.table_name }}",
+                    "rightValue": "agent_preferences",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "agent_preferences"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.table_name }}",
+                    "rightValue": "n8n_chat_histories",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "n8n_chat_histories"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "cc902f3c-d6ce-4da9-a7ed-8456fe9cbaef",
+      "name": "Route to Storage",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        660,
+        -180
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE agent_conversations SET embedding = '{{ $json.embedding }}'::vector WHERE conversation_id = '{{ $json.conversation_id }}'",
+        "options": {}
+      },
+      "id": "c237ca87-249f-4dad-bf15-5941758375cc",
+      "name": "Store Agent Conversations",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        880,
+        -580
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "REbpvUhlVsmjWCKA",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE agent_outcomes SET embedding = '{{ $json.embedding }}'::vector WHERE suggestion_id = '{{ $json.suggestion_id }}'",
+        "options": {}
+      },
+      "id": "8ea87796-ba59-4759-b319-4e03be6b4253",
+      "name": "Store Agent Outcomes",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        880,
+        -380
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "REbpvUhlVsmjWCKA",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE agent_patterns SET embedding = '{{ $json.embedding }}'::vector WHERE id = '{{ $json.id }}'",
+        "options": {}
+      },
+      "id": "33e7315f-baf3-4fef-a488-f65a23078e44",
+      "name": "Store Agent Patterns",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        880,
+        -180
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "REbpvUhlVsmjWCKA",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE agent_preferences SET embedding = '{{ $json.embedding }}'::vector WHERE id = '{{ $json.id }}'",
+        "options": {}
+      },
+      "id": "8c9eca59-3aed-4836-bd0c-8c0749681982",
+      "name": "Store Agent Preferences",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        880,
+        40
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "REbpvUhlVsmjWCKA",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE n8n_chat_histories SET embedding = '{{ $json.embedding }}'::vector WHERE id = '{{ $json.id }}'",
+        "options": {}
+      },
+      "id": "82eeb528-3966-4422-a476-3b84c8b1d939",
+      "name": "Store Chat Histories",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [
+        880,
+        240
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "REbpvUhlVsmjWCKA",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "tableName": {
+          "__rl": true,
+          "value": "agent_conversations",
+          "mode": "list",
+          "cachedResultName": "agent_conversations"
+        },
+        "additionalFields": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgresTrigger",
+      "typeVersion": 1,
+      "position": [
+        -220,
+        -580
+      ],
+      "id": "5d40c155-8556-4031-b0cc-5a22241833b6",
+      "name": "Trigger: Agent Conversations",
+      "credentials": {
+        "postgres": {
+          "id": "REbpvUhlVsmjWCKA",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "tableName": {
+          "__rl": true,
+          "value": "agent_outcomes",
+          "mode": "list",
+          "cachedResultName": "agent_outcomes"
+        },
+        "additionalFields": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgresTrigger",
+      "typeVersion": 1,
+      "position": [
+        -220,
+        -380
+      ],
+      "id": "40467409-1dce-467b-b1f5-06eadd089bcc",
+      "name": "Trigger: Agent Outcomes",
+      "credentials": {
+        "postgres": {
+          "id": "REbpvUhlVsmjWCKA",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "tableName": {
+          "__rl": true,
+          "value": "agent_patterns",
+          "mode": "list",
+          "cachedResultName": "agent_patterns"
+        },
+        "additionalFields": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgresTrigger",
+      "typeVersion": 1,
+      "position": [
+        -220,
+        -180
+      ],
+      "id": "04f3528d-5eaf-40df-ad66-f8d405943c89",
+      "name": "Trigger: Agent Patterns",
+      "credentials": {
+        "postgres": {
+          "id": "REbpvUhlVsmjWCKA",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "tableName": {
+          "__rl": true,
+          "value": "agent_preferences",
+          "mode": "list",
+          "cachedResultName": "agent_preferences"
+        },
+        "additionalFields": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgresTrigger",
+      "typeVersion": 1,
+      "position": [
+        -220,
+        40
+      ],
+      "id": "228bd7c7-fb08-43ee-bcf0-b41c351b9271",
+      "name": "Trigger: Agent Preferences",
+      "credentials": {
+        "postgres": {
+          "id": "REbpvUhlVsmjWCKA",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "tableName": {
+          "__rl": true,
+          "value": "n8n_chat_histories",
+          "mode": "list",
+          "cachedResultName": "n8n_chat_histories"
+        },
+        "additionalFields": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgresTrigger",
+      "typeVersion": 1,
+      "position": [
+        -220,
+        240
+      ],
+      "id": "3865c501-6284-4f9b-be55-be61a980ecf1",
+      "name": "Trigger: Chat Histories",
+      "credentials": {
+        "postgres": {
+          "id": "REbpvUhlVsmjWCKA",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Success notification with table-specific logging\nconst tableName = $input.first().json.table_name;\nconst recordId = $input.first().json.record_id;\nconst success = $input.first().json.success;\n\nconst logMessage = {\n  timestamp: new Date().toISOString(),\n  action: 'embedding_stored',\n  table: tableName,\n  record_id: recordId,\n  success: success,\n  workflow: 'universal_auto_embeddings_COMPLETE_FIX'\n};\n\nconsole.log(`✅ Embedding stored for ${tableName}:${recordId}`, logMessage);\n\nreturn { json: logMessage };"
+      },
+      "id": "fe08d64e-623f-487e-91f1-25016d36e918",
+      "name": "Success Notification",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1100,
+        -180
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Universal Content Processor": {
+      "main": [
+        [
+          {
+            "node": "Generate Embedding",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Embedding": {
+      "main": [
+        [
+          {
+            "node": "Process Embedding Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Embedding Response": {
+      "main": [
+        [
+          {
+            "node": "Route to Storage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route to Storage": {
+      "main": [
+        [
+          {
+            "node": "Store Agent Conversations",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Store Agent Outcomes",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Store Agent Patterns",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Store Agent Preferences",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Store Chat Histories",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger: Agent Conversations": {
+      "main": [
+        [
+          {
+            "node": "Universal Content Processor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger: Agent Outcomes": {
+      "main": [
+        [
+          {
+            "node": "Universal Content Processor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger: Agent Patterns": {
+      "main": [
+        [
+          {
+            "node": "Universal Content Processor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger: Agent Preferences": {
+      "main": [
+        [
+          {
+            "node": "Universal Content Processor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger: Chat Histories": {
+      "main": [
+        [
+          {
+            "node": "Universal Content Processor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Agent Conversations": {
+      "main": [
+        [
+          {
+            "node": "Success Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Agent Outcomes": {
+      "main": [
+        [
+          {
+            "node": "Success Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Agent Patterns": {
+      "main": [
+        [
+          {
+            "node": "Success Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Agent Preferences": {
+      "main": [
+        [
+          {
+            "node": "Success Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Chat Histories": {
+      "main": [
+        [
+          {
+            "node": "Success Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "COMPLETE-FIX-PEG-102",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "54ccffa35c7ec1709805558df90257e91833ae172533cc7aea7eaa7d1e4daef6"
+  },
+  "id": "jQYFAsj8XULWPTym-COMPLETE-FIX",
+  "tags": ["PEG-102", "COMPLETE-FIX", "PRODUCTION-READY"]
+}

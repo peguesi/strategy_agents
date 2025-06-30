@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "README.md",
+                "file": "clients/simply-bau/intel-processing-workbook.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "README"
+              "title": "intel-processing-workbook"
             }
           }
         ]
@@ -168,11 +168,29 @@
   },
   "active": "834add4240dae76f",
   "lastOpenFiles": [
-    "templates/Client-Profile-Template.md",
-    "templates/Project-Documentation-Template.md",
-    "templates/Strategic-Framework-Template.md",
-    "strategic-insights/Linear-Dynamic-Dashboard.md",
+    "clients/simply-bau/kickoff-meeting-agenda.md",
+    "clients/simply-bau/intel-processing-workbook.md",
+    "clients/simply-bau/discovery-session-planning.md",
+    "clients/simply-bau/client-context-repository.md",
+    "strategic-insights/methodologies/strategic-technology-research-framework.md",
+    "clients/simply-bau",
+    "strategic-insights/decision-frameworks/tool-selection-framework.md",
     "inbox/Integration-Test.md",
+    "templates/Strategic-Framework-Template.md",
+    "templates/Project-Documentation-Template.md",
+    "templates/Client-Profile-Template.md",
+    "strategic-insights/Strategic Framework Platform - Technical Architecture.md",
+    "strategic-insights/Strategic Framework Platform - MVP Roadmap.md",
+    "strategic-insights/Strategic Framework Automation Platform - Product Journey and Visual Design Guide.md",
+    "strategic-insights/Linear-Dynamic-Dashboard.md",
+    "strategic-insights/research/client-engagement-platform-research.md",
+    "strategic-insights/Client Workspace Journey - Simply BAU.md",
+    "strategic-insights/methodologies/dynamic-digital-ecosystem-framework.md",
+    "strategic-insights/methodologies/digital-ecosystem-research-framework.md",
+    "strategic-insights/research",
+    "strategic-insights/methodologies",
+    "README.md",
+    "strategic-insights/decision-frameworks",
     "templates"
   ]
 }

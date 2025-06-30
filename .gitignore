@@ -203,3 +203,6 @@ linear/archive/
 **/archive/
 *.original.*
 *-original.*
+
+
+mcp/claude_desktop_config.json

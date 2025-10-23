@@ -1,17 +1,37 @@
-// Enhanced Memory Retrieval Function for Strategic PM Agent
-// This function adds similarity search and context enhancement to the existing memory system
+/**
+ * Enhanced Memory Retrieval Function for Strategic PM Agent
+ * 
+ * This Node.js module provides advanced memory retrieval capabilities for the Strategic
+ * Project Management Agent. It implements similarity search and context enhancement 
+ * on top of the existing PostgreSQL-based memory system.
+ * 
+ * Features:
+ * - Semantic similarity search using vector embeddings
+ * - Context-aware memory retrieval
+ * - PostgreSQL integration with Azure database
+ * - Enhanced query processing and ranking
+ * 
+ * Dependencies:
+ * - pg (PostgreSQL client)
+ * - Azure PostgreSQL database connection
+ * 
+ * @author Strategy Agents Team
+ * @version 1.3.0
+ * @since 2025-10-23
+ * @license MIT
+ */
 
 async function enhanceMemoryWithSimilarity() {
   const { Pool } = require('pg');
   
-  // Database connection configuration
+  // Database connection configuration - USE ENVIRONMENT VARIABLES
   const pool = new Pool({
-    host: 'agent-memory-postgres.postgres.database.azure.com',
-    database: 'postgres', 
-    user: 'isaiah',
-    password: 'fgh6ckf-nyp3afg!VEQ',
-    port: 5432,
-    ssl: { rejectUnauthorized: false }
+    host: process.env.POSTGRES_HOST || 'localhost',
+    database: process.env.POSTGRES_DB || 'postgres', 
+    user: process.env.POSTGRES_USER,
+    password: process.env.POSTGRES_PASSWORD,
+    port: process.env.POSTGRES_PORT || 5432,
+    ssl: process.env.POSTGRES_SSL === 'true' ? { rejectUnauthorized: false } : false
   });
 
   try {

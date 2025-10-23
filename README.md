@@ -59,4 +59,12 @@ See `scripts/tests/` for testing utilities and examples.
 
 ---
 
-*Last updated: 2025-06-23*
+## 📊 Recent Updates
+
+- Enhanced workflow organization and documentation structure
+- Improved MCP server integration capabilities
+- Updated screenpipe automation features
+
+---
+
+*Last updated: 2025-10-23*
